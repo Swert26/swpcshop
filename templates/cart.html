@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart</title>
+  </head>
+  <body>
+    <h1>Корзина</h1>
+    {% for id in cart %} {% if id in products %}
+    <div class="card">
+      <p class="name">Имя: {{ products[id]["name"] }}</p>
+      <p class="type">Тип: {{ products[id]["type"] }}</p>
+      <p class="price">Цена: {{ products[id]["price"] }}₽</p>
+      <p class="author">Производитель: {{ products[id]["author"] }}</p>
+      <button class="card_btn">
+        <a href="/buy/{{ id }}" class="card_btn_lnk">Заказать</a>
+      </button>
+      <button class="card_btn">
+        <a href="/cart/delete/{{ id }}" class="card_btn_lnk">Remove</a>
+      </button>
+    </div>
+    {% endif %} {% endfor %}
+    <button><a href="/catalog">В каталог</a></button>
+  </body>
+</html>

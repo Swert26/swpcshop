@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог</title>
+</head>
+<body>
+    <h1>Магазин:</h1>
+    {% for id in products %}
+        <div class="card">
+            <p class="name">Имя: {{ products[id]["name"] }}</p>
+            <p class="type">Тип: {{ products[id]["type"] }}</p>
+            <p class="price">Цена: {{ products[id]["price"] }}₽</p>
+            <p class="author">Производитель: {{ products[id]["author"] }}</p>
+            <button class="buy_btn">
+                <a href="/cart/add/{{ id }}" class="buy_lnk">Купить</a>
+            </button>
+        </div>
+    {% endfor %}
+    <br>
+    <a href="/cart" class="buy_lnk">Корзина</a>
+</body>
+</html>
