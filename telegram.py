@@ -22,7 +22,7 @@ zakazed = False
 
 db = Database()
 
-TOKEN = "8380303413:AAG3zInLaPMvFJzwQ0-fY-vgRwQe91vmBgE"
+TOKEN = <you're token>
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
@@ -101,4 +101,5 @@ async def main():
     await dp.start_polling(bot)
 
 print("работает")
+
 asyncio.run(main())
