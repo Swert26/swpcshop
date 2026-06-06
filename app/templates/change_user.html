@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Редактирование профиля</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* декоративные элементы фона */
+      body::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        top: -150px;
+        right: -150px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        bottom: -200px;
+        left: -200px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* основной контейнер */
+      .edit-container {
+        max-width: 550px;
+        width: 100%;
+        margin: 0 auto;
+        animation: slideUp 0.5s ease-out;
+      }
+
+      /* шапка */
+      .edit-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .edit-header h1 {
+        font-size: 2rem;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 2rem;
+        border-radius: 3rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .edit-header h1::before {
+        content: "✏️";
+        font-size: 1.8rem;
+      }
+
+      .edit-header h1::after {
+        content: "⚙️";
+        font-size: 1.8rem;
+      }
+
+      /* карточки форм */
+      .form-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
+        margin-bottom: 1.5rem;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .form-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      /* заголовок карточки */
+      .card-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 1rem 1.5rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .card-header .icon {
+        font-size: 1.5rem;
+      }
+
+      .card-header h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      /* содержимое карточки */
+      .card-content {
+        padding: 1.5rem;
+      }
+
+      /* текущее значение */
+      .current-value {
+        background: #f7fafc;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .current-label {
+        font-weight: 600;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .current-value-text {
+        color: #2d3748;
+        font-weight: 500;
+        word-break: break-all;
+      }
+
+      .password-hidden {
+        font-family: monospace;
+        letter-spacing: 2px;
+      }
+
+      /* поля ввода */
+      .input-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .input-icon {
+        position: relative;
+      }
+
+      .input-icon input {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 2.8rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background: white;
+        color: #2d3748;
+      }
+
+      .input-icon input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.01);
+      }
+
+      .input-icon input::placeholder {
+        color: #cbd5e0;
+      }
+
+      .input-icon .field-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.1rem;
+        pointer-events: none;
+      }
+
+      /* кнопки */
+      .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.85rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: inherit;
+      }
+
+      .submit-btn::before {
+        content: "💾";
+        font-size: 1rem;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -8px rgba(102, 126, 234, 0.5);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+      }
+
+      .submit-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* кнопка домой */
+      .home-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        padding: 0.85rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px solid #e2e8f0;
+        margin-top: 0.5rem;
+      }
+
+      .home-link::before {
+        content: "🏠";
+        font-size: 1.1rem;
+      }
+
+      .home-link:hover {
+        background: #f7fafc;
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      /* уведомления */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        font-weight: 500;
+        color: #2d3748;
+        border-left: 4px solid #48bb78;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.error {
+        border-left-color: #fc8181;
+      }
+
+      /* анимации */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* валидация */
+      .input-error {
+        border-color: #fc8181 !important;
+      }
+
+      .error-message {
+        color: #fc8181;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+      }
+
+      /* медиа-запросы */
+      @media (max-width: 640px) {
+        body {
+          padding: 1rem;
+        }
+
+        .edit-header h1 {
+          font-size: 1.5rem;
+          padding: 0.5rem 1.25rem;
+        }
+
+        .card-content {
+          padding: 1.25rem;
+        }
+
+        .current-value {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .submit-btn {
+          padding: 0.7rem;
+        }
+      }
+
+      /* пароль с маской */
+      .password-wrapper {
+        position: relative;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 1rem;
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: inherit;
+      }
+
+      /* подсказки */
+      .hint {
+        font-size: 0.7rem;
+        color: #a0aec0;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="edit-container">
+      <div class="edit-header">
+        <h1>Редактирование профиля</h1>
+      </div>
+
+      <!-- форма смены имени -->
+      <div class="form-card">
+        <div class="card-header">
+          <span class="icon">👤</span>
+          <h2>Изменение имени пользователя</h2>
+        </div>
+        <div class="card-content">
+          <div class="current-value">
+            <span class="current-label">📛 Текущее имя:</span>
+            <span class="current-value-text">{{ user_data["name"] }}</span>
+          </div>
+          <form
+            action="/change_name/{{ user_data['id'] }}"
+            method="POST"
+            class="change-name-form"
+          >
+            <div class="input-group">
+              <div class="input-icon">
+                <span class="field-icon">✏️</span>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Введите новое имя"
+                />
+              </div>
+            </div>
+            <button type="submit" class="submit-btn">Сменить имя</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- форма смены пароля -->
+      <div class="form-card">
+        <div class="card-header">
+          <span class="icon">🔒</span>
+          <h2>Изменение пароля</h2>
+        </div>
+        <div class="card-content">
+          <div class="current-value">
+            <span class="current-label">🔐 Текущий пароль:</span>
+            <span class="current-value-text password-hidden">••••••••</span>
+          </div>
+          <form
+            action="/change_password/{{ user_data['id'] }}"
+            method="POST"
+            class="change-password-form"
+          >
+            <div class="input-group">
+              <div class="password-wrapper">
+                <div class="input-icon">
+                  <span class="field-icon">🔑</span>
+                  <input
+                    type="password"
+                    name="password"
+                    id="newPassword"
+                    placeholder="Введите новый пароль"
+                  />
+                </div>
+                <button type="button" class="toggle-password">👁️</button>
+              </div>
+            </div>
+            <button type="submit" class="submit-btn">Сменить пароль</button>
+          </form>
+        </div>
+      </div>
+
+      <a href="/" class="home-link">Вернуться на главную</a>
+    </div>
+  </body>
+</html>

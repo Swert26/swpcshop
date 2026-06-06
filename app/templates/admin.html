@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Панель управления пользователями</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+        position: relative;
+      }
+
+      /* контейнер для всего контента */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 2rem;
+        padding: 2rem;
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.3),
+          0 4px 12px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(2px);
+      }
+
+      /* заголовок страницы */
+      .page-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #667eea;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .page-header h1::before {
+        content: "👥";
+        font-size: 2rem;
+      }
+
+      .user-count {
+        background: #667eea;
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      /* сетка карточек пользователей */
+      .users-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      /* карточка пользователя */
+      .user-card {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e2e8f0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .user-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+      }
+
+      .user-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        border-color: #cbd5e0;
+      }
+
+      /* аватар/иконка пользователя */
+      .user-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+      }
+
+      /* информация о пользователе */
+      .user-info {
+        margin-bottom: 1.25rem;
+      }
+
+      .user-field {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 0.75rem;
+        padding: 0.5rem;
+        background: #f7fafc;
+        border-radius: 0.75rem;
+        transition: background 0.2s;
+      }
+
+      .user-field:hover {
+        background: #edf2f7;
+      }
+
+      .field-label {
+        font-weight: 700;
+        min-width: 50px;
+        color: #4a5568;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .field-value {
+        color: #2d3748;
+        font-weight: 500;
+        word-break: break-word;
+        flex: 1;
+      }
+
+      /* стили для роли с цветовым индикатором */
+      .role-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .role-admin {
+        background: #fed7d7;
+        color: #c53030;
+      }
+
+      .role-user {
+        background: #c6f6d5;
+        color: #276749;
+      }
+
+      .role-moderator {
+        background: #feebc8;
+        color: #c05621;
+      }
+
+      .role-default {
+        background: #e2e8f0;
+        color: #4a5568;
+      }
+
+      /* форма и кнопка */
+      .action-form {
+        margin-top: 1rem;
+      }
+
+      .change-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .change-btn::before {
+        content: "✏️";
+        font-size: 1rem;
+      }
+
+      .change-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+      }
+
+      .change-btn:active {
+        transform: scale(0.98);
+      }
+
+      /* пустое состояние */
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+        background: #f7fafc;
+        border-radius: 1rem;
+      }
+
+      .empty-state::before {
+        content: "📭";
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      /* ссылка "Домой" */
+      .home-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: 2px solid #e2e8f0;
+        margin-top: 1rem;
+      }
+
+      .home-link::before {
+        content: "🏠";
+        font-size: 1.1rem;
+      }
+
+      .home-link:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateX(-4px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      /* адаптивность */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        .container {
+          padding: 1.25rem;
+        }
+
+        .users-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .page-header h1 {
+          font-size: 1.4rem;
+        }
+
+        .user-card {
+          padding: 1.25rem;
+        }
+      }
+
+      /* анимация появления карточек */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user-card {
+        animation: fadeInUp 0.4s ease-out forwards;
+        opacity: 0;
+      }
+
+      /* задержки для последовательной анимации */
+      .user-card:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .user-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .user-card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .user-card:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+      .user-card:nth-child(5) {
+        animation-delay: 0.25s;
+      }
+      .user-card:nth-child(6) {
+        animation-delay: 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %} {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %} {% endwith %}
+    <div class="container">
+      <div class="users-grid">
+        {% for user in users %}
+        <div class="user-card">
+          <div class="user-avatar">
+            {{ user[1][0]|upper if user[1] else 'U' }}
+          </div>
+          <div class="user-info">
+            <div class="user-field">
+              <span class="field-label">🆔 ID</span>
+              <span class="field-value">{{ user[0] }}</span>
+            </div>
+            <div class="user-field">
+              <span class="field-label">👤 Имя</span>
+              <span class="field-value">{{ user[1] }}</span>
+            </div>
+            <div class="user-field">
+              <span class="field-label">⭐ Роль</span>
+              <span class="field-value">
+                <span
+                  class="role-badge {% if user[3] == 'admin' %}role-admin {% elif user[3] == 'moderator' %}role-moderator {% elif user[3] == 'user' %}role-user {% else %}role-default{% endif %}"
+                >
+                  {{ user[3] }}
+                </span>
+              </span>
+            </div>
+          </div>
+          <form
+            action="/change/{{ user[0] }}"
+            method="POST"
+            class="action-form"
+          >
+            <button type="submit" class="change-btn">
+              Изменить данные пользователя
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <div class="empty-state">Пользователи не найдены</div>
+        {% endfor %}
+      </div>
+
+      <div style="text-align: center">
+        <a href="/" class="home-link">Вернуться на главную</a>
+      </div>
+    </div>
+  </body>
+</html>

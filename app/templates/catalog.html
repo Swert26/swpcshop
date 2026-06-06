@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Каталог товаров</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* декоративные элементы фона */
+      body::before {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        top: -250px;
+        right: -250px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
+        bottom: -300px;
+        left: -300px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* основной контейнер */
+      .catalog-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* шапка каталога */
+      .catalog-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        animation: slideDown 0.5s ease-out;
+      }
+
+      .catalog-header h1 {
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 2rem;
+        border-radius: 3rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .catalog-header h1::before {
+        content: "🛍️";
+        font-size: 2rem;
+      }
+
+      .catalog-header h1::after {
+        content: "✨";
+        font-size: 2rem;
+      }
+
+      .catalog-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 0.5rem;
+        font-size: 1rem;
+      }
+
+      /* сетка карточек товаров */
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* карточка товара */
+      .card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 1.5rem;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        position: relative;
+        cursor: pointer;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        background-size: 200% 100%;
+        transition: background-position 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .card:hover::before {
+        background-position: 100% 0;
+      }
+
+      /* иконка товара */
+      .card-icon {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 1.5rem;
+        text-align: center;
+        font-size: 3rem;
+      }
+
+      /* содержимое карточки */
+      .card-content {
+        padding: 1.5rem;
+      }
+
+      .product-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .product-name::before {
+        content: "📦";
+        font-size: 1.1rem;
+      }
+
+      .product-detail {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        gap: 0.75rem;
+      }
+
+      .product-detail:last-of-type {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #4a5568;
+        min-width: 100px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .detail-value {
+        color: #2d3748;
+        font-weight: 500;
+        flex: 1;
+      }
+
+      /* цена со специальным выделением */
+      .price-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #667eea;
+      }
+
+      .price-value::after {
+        content: " ₽";
+        font-size: 1rem;
+      }
+
+      /* кнопка покупки */
+      .buy-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.875rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        margin-top: 0.5rem;
+      }
+
+      .buy-btn::before {
+        content: "🛒";
+        font-size: 1.1rem;
+        transition: transform 0.2s;
+      }
+
+      .buy-btn:hover {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .buy-btn:active {
+        transform: scale(0.98);
+      }
+
+      .buy-btn a {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* навигационная панель */
+      .nav-bar {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .nav-link {
+        background: rgba(255, 255, 255, 0.95);
+        color: #667eea;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .cart-link::before {
+        content: "🛒";
+        font-size: 1.1rem;
+      }
+
+      .home-link::before {
+        content: "🏠";
+        font-size: 1.1rem;
+      }
+
+      .nav-link:hover {
+        background: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: #764ba2;
+      }
+
+      /* анимации */
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* анимация для карточек с задержкой */
+      .card {
+        animation: fadeInUp 0.5s ease-out backwards;
+      }
+
+      /* пустое состояние */
+      .empty-catalog {
+        text-align: center;
+        padding: 4rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 2rem;
+        color: #718096;
+      }
+
+      .empty-catalog::before {
+        content: "📭";
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      /* медиа-запросы */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        .catalog-header h1 {
+          font-size: 1.75rem;
+          padding: 0.5rem 1.25rem;
+        }
+
+        .catalog-header h1::before,
+        .catalog-header h1::after {
+          font-size: 1.5rem;
+        }
+
+        .products-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .card-content {
+          padding: 1.25rem;
+        }
+
+        .product-name {
+          font-size: 1.1rem;
+        }
+
+        .detail-label {
+          min-width: 80px;
+          font-size: 0.75rem;
+        }
+
+        .nav-link {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      /* эффект загрузки */
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+
+      /* бейджик для типа товара */
+      .type-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: #edf2f7;
+        color: #4a5568;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="catalog-container">
+      <div class="catalog-header">
+        <h1>Магазин</h1>
+        <div class="catalog-subtitle">🔥 Горячие новинки и лучшие предложения</div>
+      </div>
+
+      {% if products %}
+      <div class="products-grid">
+        {% for id in products %}
+        <div class="card">
+          <div class="card-icon">
+            {% if products[id]["type"] == "электроника" %}📱
+            {% elif products[id]["type"] == "одежда" %}👕
+            {% elif products[id]["type"] == "книги" %}📚
+            {% elif products[id]["type"] == "дом" %}🏠
+            {% else %}🎁
+            {% endif %}
+          </div>
+          <div class="card-content">
+            <div class="product-name">
+              {{ products[id]["name"] }}
+            </div>
+            <div class="product-detail">
+              <span class="detail-label">📋 Тип</span>
+              <span class="detail-value">
+                <span class="type-badge">{{ products[id]["type"] }}</span>
+              </span>
+            </div>
+            <div class="product-detail">
+              <span class="detail-label">💰 Цена</span>
+              <span class="detail-value price-value">{{ products[id]["price"] }}</span>
+            </div>
+            <div class="product-detail">
+              <span class="detail-label">🏭 Производитель</span>
+              <span class="detail-value">{{ products[id]["author"] }}</span>
+            </div>
+            <button class="buy-btn">
+              <a href="/cart/add/{{ id }}">В корзину</a>
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-catalog">
+        <p>Товары временно отсутствуют</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Загляните позже 😊</p>
+      </div>
+      {% endif %}
+
+      <div class="nav-bar">
+        <a href="/cart" class="nav-link cart-link">Корзина</a>
+        <a href="/" class="nav-link home-link">Домой</a>
+      </div>
+    </div>
+  </body>
+</html>

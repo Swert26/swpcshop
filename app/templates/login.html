@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход | Авторизация</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* декоративные элементы фона */
+      body::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        top: -150px;
+        right: -150px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        bottom: -200px;
+        left: -200px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* основная карточка входа */
+      .login-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 2rem;
+        box-shadow:
+          0 25px 50px -12px rgba(0, 0, 0, 0.25),
+          0 8px 20px -8px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 480px;
+        padding: 2.5rem;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        position: relative;
+        backdrop-filter: blur(2px);
+      }
+
+      .login-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+      }
+
+      /* заголовок */
+      .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .login-header h1 {
+        font-size: 2rem;
+        color: #1a202c;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .login-header h1::before {
+        content: "🔐";
+        font-size: 1.8rem;
+      }
+
+      .login-header h1::after {
+        content: "👋";
+        font-size: 1.8rem;
+      }
+
+      .login-subtitle {
+        color: #718096;
+        font-size: 0.9rem;
+        border-top: 2px solid #e2e8f0;
+        display: inline-block;
+        padding-top: 0.5rem;
+      }
+
+      /* форма */
+      .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      /* группы полей ввода */
+      .input-group {
+        position: relative;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .login-input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem;
+        font-size: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        color: #2d3748;
+      }
+
+      .login-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.02);
+      }
+
+      .login-input::placeholder {
+        color: #cbd5e0;
+        transition: opacity 0.3s;
+      }
+
+      .login-input:focus::placeholder {
+        opacity: 0.7;
+      }
+
+      /* дополнительная опция "запомнить меня" */
+      .remember-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: -0.5rem;
+      }
+
+      .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        color: #4a5568;
+        font-size: 0.9rem;
+      }
+
+      .checkbox-label input[type="checkbox"] {
+        width: 1.1rem;
+        height: 1.1rem;
+        cursor: pointer;
+        accent-color: #667eea;
+      }
+
+      .forgot-link {
+        color: #667eea;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.2s;
+      }
+
+      .forgot-link:hover {
+        color: #764ba2;
+        text-decoration: underline;
+      }
+
+      /* кнопка входа */
+      .login-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.9rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        margin-top: 0.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-btn::before {
+        content: "→";
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .login-btn:hover::before {
+        transform: translateX(4px);
+      }
+
+      .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -8px rgba(102, 126, 234, 0.5);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      }
+
+      .login-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* ссылка на регистрацию */
+      .register-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .register-link span {
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      .register-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 0.5rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .register-link a::after {
+        content: "→";
+        transition: transform 0.2s;
+      }
+
+      .register-link a:hover {
+        color: #764ba2;
+      }
+
+      .register-link a:hover::after {
+        transform: translateX(3px);
+      }
+
+      /* демо-подсказка (для удобства тестирования) */
+      .demo-hint {
+        background: #f7fafc;
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        margin-top: 1.5rem;
+        font-size: 0.75rem;
+        color: #718096;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+      }
+
+      .demo-hint::before {
+        content: "💡 ";
+        font-weight: bold;
+      }
+
+      /* анимация появления */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .login-container {
+        animation: slideUp 0.5s ease-out;
+      }
+
+      /* стили для ошибок */
+      .input-error {
+        border-color: #fc8181;
+      }
+
+      .error-message {
+        color: #fc8181;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      /* медиа-запросы для адаптивности */
+      @media (max-width: 640px) {
+        .login-container {
+          padding: 1.75rem;
+          margin: 1rem;
+        }
+
+        .login-header h1 {
+          font-size: 1.5rem;
+        }
+
+        .login-header h1::before,
+        .login-header h1::after {
+          font-size: 1.3rem;
+        }
+
+        .login-input {
+          padding: 0.8rem 1rem 0.8rem 2.5rem;
+          font-size: 0.95rem;
+        }
+
+        .login-btn {
+          padding: 0.8rem;
+          font-size: 0.95rem;
+        }
+
+        .remember-group {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-header">
+        <h1>Вход</h1>
+        <div class="login-subtitle">Добро пожаловать обратно!</div>
+        {% with messages = get_flashed_messages() %} {% for message in messages
+        %}
+        <h3>{{ message }}</h3>
+        {% endfor %} {% endwith %}
+      </div>
+
+      <form action="/login" method="POST" class="login-form">
+        <div class="input-group">
+          <span class="input-icon">👤</span>
+          <input
+            type="text"
+            placeholder="Имя пользователя"
+            name="name"
+            class="login-input"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="input-group">
+          <span class="input-icon">🔒</span>
+          <input
+            type="password"
+            placeholder="Пароль"
+            name="password"
+            class="login-input"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="login-btn">Войти в аккаунт</button>
+      </form>
+
+      <div class="register-link">
+        <span>Нет аккаунта?</span>
+        <a href="/register">Зарегистрироваться</a>
+      </div>
+    </div>
+  </body>
+</html>

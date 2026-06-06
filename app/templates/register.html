@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация | Создать аккаунт</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* декоративные круги на фоне */
+      body::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        top: -150px;
+        right: -150px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        bottom: -200px;
+        left: -200px;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* основная карточка регистрации */
+      .register-container {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 2rem;
+        box-shadow:
+          0 25px 50px -12px rgba(0, 0, 0, 0.25),
+          0 8px 20px -8px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 480px;
+        padding: 2.5rem;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        position: relative;
+        backdrop-filter: blur(2px);
+      }
+
+      .register-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+      }
+
+      /* заголовок */
+      .register-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .register-header h1 {
+        font-size: 2rem;
+        color: #1a202c;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .register-header h1::before {
+        content: "✨";
+        font-size: 1.8rem;
+      }
+
+      .register-header h1::after {
+        content: "🚀";
+        font-size: 1.8rem;
+      }
+
+      .register-subtitle {
+        color: #718096;
+        font-size: 0.9rem;
+        border-top: 2px solid #e2e8f0;
+        display: inline-block;
+        padding-top: 0.5rem;
+      }
+
+      /* форма */
+      .register-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      /* группы полей ввода */
+      .input-group {
+        position: relative;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .register-input {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem;
+        font-size: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        background: white;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        color: #2d3748;
+      }
+
+      .register-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: scale(1.02);
+      }
+
+      .register-input::placeholder {
+        color: #cbd5e0;
+        transition: opacity 0.3s;
+      }
+
+      .register-input:focus::placeholder {
+        opacity: 0.7;
+      }
+
+      /* специальный стиль для поля пароля */
+      .password-group {
+        position: relative;
+      }
+
+      /* кнопка регистрации */
+      .register-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.9rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        border-radius: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        margin-top: 0.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .register-btn::before {
+        content: "→";
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .register-btn:hover::before {
+        transform: translateX(4px);
+      }
+
+      .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -8px rgba(102, 126, 234, 0.5);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      }
+
+      .register-btn:active {
+        transform: translateY(1px);
+      }
+
+      /* ссылка на вход */
+      .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .login-link span {
+        color: #718096;
+        font-size: 0.9rem;
+      }
+
+      .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 0.5rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .login-link a::after {
+        content: "→";
+        transition: transform 0.2s;
+      }
+
+      .login-link a:hover {
+        color: #764ba2;
+      }
+
+      .login-link a:hover::after {
+        transform: translateX(3px);
+      }
+
+      /* анимация появления */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .register-container {
+        animation: slideUp 0.5s ease-out;
+      }
+
+      /* валидация/ошибки (опционально) */
+      .input-error {
+        border-color: #fc8181;
+      }
+
+      .error-message {
+        color: #fc8181;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      /* медиа-запросы для адаптивности */
+      @media (max-width: 640px) {
+        .register-container {
+          padding: 1.75rem;
+          margin: 1rem;
+        }
+
+        .register-header h1 {
+          font-size: 1.5rem;
+        }
+
+        .register-header h1::before,
+        .register-header h1::after {
+          font-size: 1.3rem;
+        }
+
+        .register-input {
+          padding: 0.8rem 1rem 0.8rem 2.5rem;
+          font-size: 0.95rem;
+        }
+
+        .register-btn {
+          padding: 0.8rem;
+          font-size: 0.95rem;
+        }
+      }
+
+      /* подсказки для пароля */
+      .password-hint {
+        font-size: 0.7rem;
+        color: #a0aec0;
+        margin-top: 0.25rem;
+        margin-left: 0.5rem;
+      }
+
+      /* эффект при фокусе на всей карточке */
+      .register-input:focus {
+        border-color: #667eea;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="register-header">
+        <h1>Регистрация</h1>
+        <div class="register-subtitle">Создайте новый аккаунт</div>
+        {% with messages = get_flashed_messages() %} {% for message in messages
+        %}
+        <h3>{{ message }}</h3>
+        {% endfor %} {% endwith %}
+      </div>
+
+      <form action="/register" method="POST" class="register-form">
+        <div class="input-group">
+          <span class="input-icon">👤</span>
+          <input
+            type="text"
+            placeholder="Имя пользователя"
+            name="name"
+            class="register-input"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="input-group password-group">
+          <span class="input-icon">🔒</span>
+          <input
+            type="password"
+            placeholder="Пароль"
+            name="password"
+            class="register-input"
+            required
+            autocomplete="new-password"
+            minlength="5"
+          />
+        </div>
+
+        <button type="submit" class="register-btn">Зарегистрироваться</button>
+      </form>
+
+      <div class="login-link">
+        <span>Уже есть аккаунт?</span>
+        <a href="/login">Войти</a>
+      </div>
+    </div>
+  </body>
+</html>
